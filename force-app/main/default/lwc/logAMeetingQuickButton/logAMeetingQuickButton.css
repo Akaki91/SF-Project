@@ -1,0 +1,26 @@
+.txt {
+  margin: 12px 5px 0px;
+  font-size: 12px;
+}
+
+.selected {
+  margin: 8px;
+  padding: 5px;
+  border-radius: 5px;
+  background: #a6e2b8;
+  font-size: 14px;
+  pointer-events: none;
+  display: inline-block;
+}
+
+.remove {
+  cursor: pointer;
+  padding-left: 4px;
+  pointer-events: auto;
+  top: -1px;
+  position: relative;
+}
+
+.emailbtn {
+  width: 9rem;
+}

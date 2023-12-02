@@ -1,0 +1,184 @@
+<template>
+  <section class="slds-is-relative">
+    <lightning-spinner
+      alternative-text="Loading..."
+      variant="brand"
+      if:true={spinner}
+    ></lightning-spinner>
+    <div class="slds-modal__header">
+      <h1 class="slds-modal__title slds-hyphenate">Meeting Form</h1>
+    </div>
+    <div
+      if:true={form}
+      class="slds-modal__content slds-p-around_large slds-m-vertical_x-small slds-text-heading_small"
+    >
+      <lightning-record-edit-form
+        object-api-name="Meeting__c"
+        onsubmit={handleSubmit}
+        onsuccess={handleSuccess}
+      >
+        <lightning-input-field
+          field-name="Account__c"
+          value={recordId}
+          class="slds-hide"
+        ></lightning-input-field>
+        <lightning-input-field
+          field-name="Summary__c"
+          required
+        ></lightning-input-field>
+        <lightning-input-field
+          field-name="Meeting_Date__c"
+          required
+        ></lightning-input-field>
+        <lightning-input-field
+          field-name="Detailed_Note__c"
+          required
+        ></lightning-input-field>
+
+        <lightning-input
+          label="Select Internal Attendees"
+          class="slds-m-horizontal_xx-small"
+          type="search"
+          name="search"
+          placeholder="Search Internal Users"
+          value={username}
+          onchange={handleKeyChange}
+        >
+        </lightning-input>
+        <div
+          if:true={showSearchResults}
+          class="slds-dropdown slds-dropdown_fluid"
+          role="listbox"
+          style="width: 90%"
+        >
+          <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+            <template
+              for:each={searchResults}
+              for:item="user"
+              for:index="index"
+            >
+              <li
+                key={user.Id}
+                onclick={handleUserSelection}
+                data-value={user.Id}
+                data-index={index}
+              >
+                <div
+                  data-index={index}
+                  class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                  role="option"
+                >
+                  <span
+                    class="slds-media__body slds-text-link"
+                    data-index={index}
+                  >
+                    {user.Name}
+                  </span>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
+        <template if:true={showAttendeeList}>
+          <p class="txt">Selected Internal Attendees:</p>
+          <div>
+            <template for:each={attendeeList} for:item="user" for:index="index">
+              <span key={user.Id} class="selected">
+                {user.Name}
+                <span onclick={handleRemoveUser} class="remove">
+                  <lightning-icon
+                    icon-name="utility:close"
+                    size="xx-small"
+                    data-index={index}
+                  >
+                  </lightning-icon>
+                </span>
+              </span>
+            </template>
+          </div>
+        </template>
+
+        <template if:true={showContactList}>
+          <lightning-combobox
+            label="Select External Attendees"
+            class="slds-m-horizontal_xx-small slds-m-top_medium"
+            placeholder="Select External Attendees"
+            options={contactList}
+            onchange={handleContactSelection}
+          >
+          </lightning-combobox>
+          <template if:true={showAttendeeExternalList}>
+            <p class="txt">Selected External Attendees:</p>
+            <div>
+              <template
+                for:each={attendeeExternalList}
+                for:item="contact"
+                for:index="index"
+              >
+                <span key={contact.Id} class="selected">
+                  {contact.Name}
+                  <span onclick={handleRemoveContact} class="remove">
+                    <lightning-icon
+                      icon-name="utility:close"
+                      size="xx-small"
+                      data-index={index}
+                    >
+                    </lightning-icon>
+                  </span>
+                </span>
+              </template>
+            </div>
+          </template>
+        </template>
+
+        <div class="slds-m-top_large slds-m-horizontal_xx-small">
+          <lightning-button
+            variant="brand"
+            type="submit"
+            label="Save a meeting"
+          >
+          </lightning-button>
+        </div>
+      </lightning-record-edit-form>
+    </div>
+
+    <div
+      if:true={output}
+      class="slds-modal__content slds-p-around_large slds-m-vertical_x-small slds-text-heading_small"
+    >
+      <template if:true={emailsection}>
+        <h1 class="slds-text-align_center">
+          Meeting record successfuly saved. Do you want to send it as an email?
+        </h1>
+
+        <lightning-input
+          type="email"
+          label="Enter emails seperated by comma"
+          value={emailList}
+          onchange={handleEmailChange}
+          multiple="true"
+          placeholder="Enter emails here seperated by comma"
+          class="slds-m-horizontal_xx-small slds-m-top_small"
+          required
+        >
+        </lightning-input>
+
+        <div class="slds-m-top_large slds-m-horizontal_xx-small">
+          <lightning-button
+            onclick={sendEmail}
+            variant="outline-brand"
+            type="submit"
+            label="Send Email"
+          >
+          </lightning-button>
+        </div>
+      </template>
+      <template if:true={emailsuccess}>
+        <h1 class="slds-text-align_center">Email Successfully Sent</h1>
+      </template>
+      <template if:true={emailfailure}>
+        <h1 class="slds-text-align_center">Email Failed to send</h1>
+      </template>
+    </div>
+  </section>
+</template>
