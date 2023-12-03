@@ -11,6 +11,7 @@ export default class LogAMeetingQuickButton extends LightningElement {
   searchResults = [];
   @track attendeeList = [];
   contactList = [];
+  showContactList;
   @track attendeeExternalList = [];
   spinner;
   form = true;
@@ -30,10 +31,6 @@ export default class LogAMeetingQuickButton extends LightningElement {
     return this.attendeeList.length > 0;
   }
 
-  get showContactList() {
-    return this.contactList.length > 0;
-  }
-
   get showAttendeeExternalList() {
     return this.attendeeExternalList.length > 0;
   }
@@ -44,6 +41,7 @@ export default class LogAMeetingQuickButton extends LightningElement {
       data.forEach((contact) => {
         this.contactList.push({ label: contact.Name, value: contact.Id });
       });
+      this.showContactList = true;
     } else if (error) {
       this.error = error;
     }
@@ -193,9 +191,5 @@ export default class LogAMeetingQuickButton extends LightningElement {
           this.error = error;
         });
     }
-
-    // emailList.forEach(element => {
-    //     console.log(element);
-    // });
   }
 }
